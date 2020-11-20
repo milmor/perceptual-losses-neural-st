@@ -1,0 +1,7 @@
+__pycache__/
+ms-coco/
+*.ipynb
+.ipynb_checkpoints/
+.vscode/
+
+
