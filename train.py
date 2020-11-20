@@ -1,6 +1,6 @@
 import argparse
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # disable tensorflow debugging logs
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable tensorflow debugging logs
 import tensorflow as tf
 from tensorflow.keras.applications import vgg16
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
@@ -9,9 +9,15 @@ import time
 from model import ImageTransformNet, LossNetwork
 from utils import convert, style_loss, content_loss, gram_matrix
 from hparams import hparams
+
+# Initialize DNN
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
+
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 policy = mixed_precision.Policy('mixed_float16')
 mixed_precision.set_policy(policy)
+
 
 
 def create_ds(args):  
@@ -21,7 +27,8 @@ def create_ds(args):
     return ds
 
 
-def create_test_batch(args):# Paper original content images
+def create_test_batch(args):
+    # Tensorboard defalut test images
     test_content_img = ['avril_cropped.jpg', 
                         'taj_mahal.jpg',
                         'chicago_cropped.jpg']
@@ -46,10 +53,14 @@ def run_training(args):
                                               max_to_keep=args.max_ckpt_to_keep)
                                               
     ckpt.restore(ckpt_manager.latest_checkpoint)
+    print("\n##################################################################")
+    print("Perceptual Losses for Real-Time Style Transferand Super-Resolution")
     if ckpt_manager.latest_checkpoint:
-        print("Restored from {}".format(ckpt_manager.latest_checkpoint))
+        print("Restored {} from {}".format(args.name, ckpt_manager.latest_checkpoint))
     else:
-        print("Initializing from scratch.")
+        print("Initializing {} from scratch".format(args.name))
+    print("##################################################################\n")
+    print("Start TensorBoard: tensorboard --logdir ./\n")
 
     log_dir = os.path.join(args.name, 'log_dir')
     writer = tf.summary.create_file_writer(log_dir)
@@ -126,7 +137,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
     parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
-    parser.add_argument('--name', default='model_4')
+    parser.add_argument('--name', default='model_1')
     parser.add_argument('--checkpoint_interval', type=int, default=50)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=10)
     parser.add_argument('--test_img', default='./images/content_img/')
