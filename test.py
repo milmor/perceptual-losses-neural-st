@@ -6,9 +6,12 @@ import tensorflow as tf
 import numpy as np
 import PIL.Image
 from model import ImageTransformNet
-from utils import convert, tensor_to_image
+from utils import test_convert, tensor_to_image
 from hparams import hparams
 
+# Initialize DNN
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
 def run_test(args):
     it_network = ImageTransformNet(hparams['test_size'])
@@ -22,7 +25,7 @@ def run_test(args):
     content_img_list = os.listdir(args.test_content_img)
 
     for c_file in content_img_list:
-        content = convert(os.path.join(args.test_content_img, c_file))[tf.newaxis, :]
+        content = test_convert(os.path.join(args.test_content_img, c_file))[tf.newaxis, :]
         output = it_network(content)
         tensor = tensor_to_image(output)
         c_name = os.path.splitext(c_file)[0] 
@@ -33,7 +36,7 @@ def run_test(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='model_4')
+    parser.add_argument('--name', default='model_2')
     parser.add_argument('--test_content_img', default='./images/content_img/')
     parser.add_argument('--output_dir', default='./images/output_img/')
 
