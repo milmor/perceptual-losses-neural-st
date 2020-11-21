@@ -1,13 +1,15 @@
 import tensorflow as tf
 from tensorflow.keras import layers
 import tensorflow_addons as tfa
+from hparams import hparams
 
 def ImageTransformNet(input_shape=(256, 256, 3)):
     inputs = tf.keras.Input(shape=input_shape)
+    hparams['residual_filters']
 
     x = layers.ZeroPadding2D(padding=2)(inputs)
     x = layers.Conv2D(32, 9, strides=1, padding='same',
-                      kernel_initializer='he_normal')(x)
+                        kernel_initializer='he_normal')(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer="he_normal",
@@ -22,7 +24,7 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
                                          gamma_initializer="he_normal")(x)
     x = layers.Activation("relu")(x)
     
-    x = layers.Conv2D(64, 3, strides=2,
+    x = layers.Conv2D(hparams['residual_filters'], 3, strides=2,
                       kernel_initializer='he_normal')(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
@@ -30,7 +32,7 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
                                          gamma_initializer="he_normal")(x)
     x = layers.Activation("relu")(x)
 
-    for size in [64, 64, 64, 64]:
+    for size in [hparams['residual_filters']]*hparams['residual_layers']:
         residual = x
         x = layers.Conv2D(size, 3, padding='same',
                           kernel_initializer='he_normal')(x)
@@ -43,9 +45,9 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
         x = x = layers.Conv2D(size, 3, padding='same',
                               kernel_initializer='he_normal')(x)
         x = tfa.layers.InstanceNormalization(axis=3, center=True, 
-                                            scale=True,
-                                            beta_initializer="he_normal",
-                                            gamma_initializer="he_normal")(x)
+                                             scale=True,
+                                             beta_initializer="he_normal",
+                                             gamma_initializer="he_normal")(x)
         x = layers.add([x, residual])  # Add back residual
 
     x = layers.UpSampling2D(2)(x)
