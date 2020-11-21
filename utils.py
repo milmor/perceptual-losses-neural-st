@@ -9,6 +9,12 @@ def convert(file_path):
     img = tf.image.resize(img, hparams['input_size'][:2])
     return img
 
+def test_convert(file_path):
+    img = tf.io.read_file(file_path)
+    img = tf.image.decode_jpeg(img, channels=3)
+    img = tf.image.resize(img, hparams['test_size'][:2])
+    return img
+
 def tensor_to_image(tensor):
     tensor = tf.clip_by_value(tensor, 0, 255)
     tensor = np.array(tensor, dtype=np.uint8)

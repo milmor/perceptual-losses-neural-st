@@ -16,11 +16,19 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 def run_test(args):
     it_network = ImageTransformNet(hparams['test_size'])
     ckpt_dir = os.path.join(args.name, 'pretrained')
-    checkpoint = tf.train.Checkpoint(network=it_network)
-    checkpoint.restore(tf.train.latest_checkpoint(ckpt_dir)).expect_partial()
-
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
+    ckpt = tf.train.Checkpoint(network=it_network)
+    ckpt.restore(tf.train.latest_checkpoint(ckpt_dir)).expect_partial()
+    print("\n###################################################")
+    print("Perceptual Losses for Real-Time Style Transfer Test")
+    print("###################################################\n")
+    print("Restored {}\n".format(args.name))
+    
+    dir_name = "{}_{}x{}".format(args.name, 
+                                 str(hparams['test_size'][0]), # img dim
+                                 str(hparams['test_size'][1]))
+    out_dir = os.path.join(args.output_path, dir_name)
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
     content_img_list = os.listdir(args.test_content_img)
 
@@ -29,16 +37,16 @@ def run_test(args):
         output = it_network(content)
         tensor = tensor_to_image(output)
         c_name = os.path.splitext(c_file)[0] 
-        save_path = os.path.join(args.output_dir, c_name)
-        tensor.save(save_path, "JPEG")
-        print ('Image {}.JPEG saved'.format(save_path))
+        save_path = os.path.join(out_dir, c_name)
+        tensor.save(save_path + ".jpeg", "JPEG")
+        print ('Image: {}.jpeg saved'.format(save_path))
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='model_2')
+    parser.add_argument('--name', default='model_4')
     parser.add_argument('--test_content_img', default='./images/content_img/')
-    parser.add_argument('--output_dir', default='./images/output_img/')
+    parser.add_argument('--output_path', default='./images/')
 
     args = parser.parse_args()
 
