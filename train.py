@@ -20,18 +20,18 @@ mixed_precision.set_policy(policy)
 
 
 
-def create_ds(args):  
+def create_ds(args):
     train_list_ds = tf.data.Dataset.list_files(str(args.content_dir + '*.jpg'), shuffle=True)
-    train_images_ds = train_list_ds.map(convert, num_parallel_calls=AUTOTUNE)  
+    train_images_ds = train_list_ds.map(convert, num_parallel_calls=AUTOTUNE)
     ds = train_images_ds.repeat().batch(hparams['batch_size']).prefetch(buffer_size=AUTOTUNE)
     return ds
 
 
 def create_test_batch(args):
     # Tensorboard defalut test images
-    test_content_img = ['avril_cropped.jpg', 
-                        'taj_mahal.jpg',
-                        'chicago_cropped.jpg']
+    test_content_img = ['chameleon.jpg',
+                        'wall.jpg',
+                        'face.jpg']
     test_content_batch = tf.concat(
         [convert(os.path.join(args.test_img, img))[tf.newaxis, :] for img in test_content_img], axis=0)
     return test_content_batch
@@ -53,14 +53,15 @@ def run_training(args):
                                               max_to_keep=args.max_ckpt_to_keep)
                                               
     ckpt.restore(ckpt_manager.latest_checkpoint)
-    print("\n##################################################################")
-    print("Perceptual Losses for Real-Time Style Transferand Super-Resolution")
+    print("\n###################################################################")
+    print("Perceptual Losses for Real-Time Style Transfer and Super-Resolution")
+    print("###################################################################\n")
     if ckpt_manager.latest_checkpoint:
-        print("Restored {} from {}".format(args.name, ckpt_manager.latest_checkpoint))
+        print("Restored {} from: {}".format(args.name, ckpt_manager.latest_checkpoint))
     else:
         print("Initializing {} from scratch".format(args.name))
-    print("##################################################################\n")
-    print("Start TensorBoard: tensorboard --logdir ./\n")
+    print("Style image: {}".format(args.style_img))
+    print("Start TensorBoard with: tensorboard --logdir ./\n")
 
     log_dir = os.path.join(args.name, 'log_dir')
     writer = tf.summary.create_file_writer(log_dir)
@@ -103,9 +104,9 @@ def run_training(args):
         return total_loss, c_loss, s_loss
     
     total_start = time.time()
-    for image in dataset:
+    for batch_image in dataset:
         start = time.time()
-        total_loss, c_loss, s_loss = train_step(image)
+        total_loss, c_loss, s_loss = train_step(batch_image)
         total_loss_avg.update_state(total_loss)
         content_loss_avg.update_state(c_loss)
         style_loss_avg.update_state(s_loss)
@@ -115,7 +116,7 @@ def run_training(args):
         if (step_int) % args.checkpoint_interval == 0:
             ckpt_manager.save(step_int)
             prediction = it_network(test_content_batch)
-            #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 1)*255, dtype=np.uint8)
+            #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 1)*255, dtype=np.uint8) # Poor quality, no convergence
             prediction_norm = np.array(tf.clip_by_value(prediction, 0, 255), dtype=np.uint8)
     
             with writer.as_default():
@@ -124,7 +125,7 @@ def run_training(args):
                 tf.summary.scalar('style loss', style_loss_avg.result(), step=step_int)
                 images = np.reshape(prediction_norm, (-1, hparams['input_size'][0], 
                                                           hparams['input_size'][1], 3))
-                tf.summary.image('generated image', images, step=step_int, max_outputs=3)
+                tf.summary.image('generated image', images, step=step_int, max_outputs=len(test_content_batch))
                 
             print ('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
             print ('Loss content: {:.4f}'.format(content_loss_avg.result()))
@@ -137,9 +138,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
     parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
-    parser.add_argument('--name', default='model_1')
+    parser.add_argument('--name', default='model_4')
     parser.add_argument('--checkpoint_interval', type=int, default=50)
-    parser.add_argument('--max_ckpt_to_keep', type=int, default=10)
+    parser.add_argument('--max_ckpt_to_keep', type=int, default=20)
     parser.add_argument('--test_img', default='./images/content_img/')
     
     args = parser.parse_args()
