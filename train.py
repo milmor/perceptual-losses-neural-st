@@ -7,7 +7,7 @@ from tensorflow.keras.mixed_precision import experimental as mixed_precision
 import numpy as np
 import time
 from model import ImageTransformNet, LossNetwork
-from utils import convert, style_loss, content_loss, gram_matrix
+from utils import convert, style_loss, content_loss, gram_matrix, save_hparams
 from hparams import hparams
 
 # Initialize DNN
@@ -53,21 +53,23 @@ def run_training(args):
                                               max_to_keep=args.max_ckpt_to_keep)
                                               
     ckpt.restore(ckpt_manager.latest_checkpoint)
-    print("\n###################################################################")
-    print("Perceptual Losses for Real-Time Style Transfer and Super-Resolution")
-    print("###################################################################\n")
+    print("\n####################################################")
+    print("Perceptual Losses for Real-Time Style Transfer Train")
+    print("####################################################\n")
     if ckpt_manager.latest_checkpoint:
         print("Restored {} from: {}".format(args.name, ckpt_manager.latest_checkpoint))
     else:
         print("Initializing {} from scratch".format(args.name))
     print("Style image: {}".format(args.style_img))
-    print("Start TensorBoard with: tensorboard --logdir ./\n")
+    print("Start TensorBoard with: $ tensorboard --logdir ./\n")
 
     log_dir = os.path.join(args.name, 'log_dir')
     writer = tf.summary.create_file_writer(log_dir)
     total_loss_avg = tf.keras.metrics.Mean()
     style_loss_avg = tf.keras.metrics.Mean()
     content_loss_avg = tf.keras.metrics.Mean()
+
+    save_hparams(args.name)
 
     style_img = convert(args.style_img)
     target_feature_maps = loss_network(vgg16.preprocess_input(style_img[tf.newaxis, :]))
@@ -137,8 +139,8 @@ def run_training(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
-    parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
-    parser.add_argument('--name', default='model_4')
+    parser.add_argument('--style_img', default='./images/style_img/ashville.jpg')
+    parser.add_argument('--name', default='model_ah3')
     parser.add_argument('--checkpoint_interval', type=int, default=50)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=20)
     parser.add_argument('--test_img', default='./images/content_img/')

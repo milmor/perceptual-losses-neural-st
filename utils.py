@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import PIL.Image
+import os
+import json
 from hparams import hparams
 
 def convert(file_path):
@@ -43,3 +45,9 @@ def style_loss(style, output):
         s_feat = tf.cast(s_feat, tf.float32)
         s_loss += tf.reduce_mean(tf.square(s_feat-o_feat))
     return s_loss
+
+def save_hparams(model_name):
+    json_hparams = json.dumps(hparams)
+    f = open(os.path.join(model_name, "{}_hparams.json".format(model_name)), "w")
+    f.write(json_hparams)
+    f.close()
