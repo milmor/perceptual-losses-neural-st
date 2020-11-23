@@ -139,8 +139,8 @@ def run_training(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
-    parser.add_argument('--style_img', default='./images/style_img/ashville.jpg')
-    parser.add_argument('--name', default='model_ah3')
+    parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
+    parser.add_argument('--name', default='model')
     parser.add_argument('--checkpoint_interval', type=int, default=50)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=20)
     parser.add_argument('--test_img', default='./images/content_img/')

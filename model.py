@@ -3,29 +3,44 @@ from tensorflow.keras import layers
 import tensorflow_addons as tfa
 from hparams import hparams
 
+
+class ConvReflect(tf.keras.layers.Layer):
+    # 2D convolution layer with `padding` as "reflect".
+    def __init__(self, filters, kernel_size, strides=(1, 1), 
+                 kernel_initializer='glorot_uniform'):
+        super(ConvReflect, self).__init__()
+        self.size_pad = kernel_size // 2
+        self.padding = tf.constant([[0, 0], 
+                                    [self.size_pad, self.size_pad], 
+                                    [self.size_pad, self.size_pad], 
+                                    [0, 0]])
+        self.conv2d = layers.Conv2D(filters, kernel_size, strides,
+                                    kernel_initializer=kernel_initializer)
+
+    def call(self, x):
+        x = tf.pad(x, self.padding, "REFLECT") 
+        x = self.conv2d(x)
+        return x
+
+
 def ImageTransformNet(input_shape=(256, 256, 3)):
     inputs = tf.keras.Input(shape=input_shape)
-    hparams['residual_filters']
 
-    x = layers.ZeroPadding2D(padding=2)(inputs)
-    x = layers.Conv2D(32, 9, strides=1, padding='same',
-                        kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(32, 9, kernel_initializer=hparams["initializer"])(inputs)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
                                          gamma_initializer=hparams["initializer"])(x)
     x = layers.Activation("relu")(x)
     
-    x = layers.Conv2D(64, 3, strides=2,
-                      kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(64, 3, strides=2, kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
                                          gamma_initializer=hparams["initializer"])(x)
     x = layers.Activation("relu")(x)
     
-    x = layers.Conv2D(hparams['residual_filters'], 3, strides=2,
-                      kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(64, 3, strides=2, kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
@@ -34,16 +49,15 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
 
     for size in [hparams['residual_filters']]*hparams['residual_layers']:
         residual = x
-        x = layers.Conv2D(size, 3, padding='same',
-                          kernel_initializer='he_normal')(x)
+        x = ConvReflect(size, 3, kernel_initializer=hparams["initializer"])(x)
         x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                              scale=True,
-                                             beta_initializer="he_normal",
-                                             gamma_initializer="he_normal")(x)
+                                             beta_initializer=hparams["initializer"],
+                                             gamma_initializer=hparams["initializer"])(x)
 
         x = layers.Activation("relu")(x)
-        x = x = layers.Conv2D(size, 3, padding='same',
-                              kernel_initializer=hparams["initializer"])(x)
+
+        x = ConvReflect(size, 3, kernel_initializer=hparams["initializer"])(x)
         x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                              scale=True,
                                              beta_initializer=hparams["initializer"],
@@ -51,8 +65,7 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
         x = layers.add([x, residual])  # Add back residual
 
     x = layers.UpSampling2D(2)(x)
-    x = layers.Conv2D(64, 3, strides=1, padding='same',
-                             kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(64, 3, kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
@@ -60,16 +73,15 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
     x = layers.Activation("relu")(x)   
 
     x = layers.UpSampling2D(2)(x)
-    x = layers.Conv2D(32, 3, strides=1, padding='same',
-                      kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(32, 3, kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
                                          gamma_initializer=hparams["initializer"])(x)
     x = layers.Activation("relu")(x)
     
-    outputs = layers.Conv2D(3, 9, strides=1, padding='same', dtype='float32',
-                            kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(3, 9, kernel_initializer=hparams["initializer"])(x)
+    outputs = layers.Activation('linear', dtype='float32')(x)
 
     return tf.keras.Model(inputs, outputs)
 

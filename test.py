@@ -23,10 +23,11 @@ def run_test(args):
     print("###################################################\n")
     print("Restored {}\n".format(args.name))
     
-    dir_name = "{}_{}x{}".format(args.name, 
-                                 str(hparams['test_size'][0]), # img dim
+    dir_size = "{}x{}".format(str(hparams['test_size'][0]), # img dim
                                  str(hparams['test_size'][1]))
-    out_dir = os.path.join(args.output_path, dir_name)
+    dir_model = "output_img_{}".format(args.name)
+    out_dir = os.path.join(args.output_path, dir_model, dir_size)
+
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -44,7 +45,7 @@ def run_test(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--name', default='model_4')
+    parser.add_argument('--name', default='model')
     parser.add_argument('--test_content_img', default='./images/content_img/')
     parser.add_argument('--output_path', default='./images/')
 
