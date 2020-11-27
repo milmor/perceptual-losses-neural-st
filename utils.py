@@ -26,10 +26,10 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 def gram_matrix(input_tensor):
-    input_tensor = tf.cast(input_tensor, tf.float32)# avoid mixed_precision nan
+    input_tensor = tf.cast(input_tensor, tf.float32) # avoid mixed_precision nan
     result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
     input_shape = tf.shape(input_tensor)
-    num_locations = tf.cast(input_shape[1]*input_shape[2], tf.float32)# int32 to float32
+    num_locations = tf.cast(input_shape[1]*input_shape[2], tf.float32) # int32 to float32
     return result/num_locations
 
 def content_loss(content, output):

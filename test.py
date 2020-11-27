@@ -13,6 +13,7 @@ from hparams import hparams
 gpus = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
+
 def run_test(args):
     it_network = ImageTransformNet(hparams['test_size'])
     ckpt_dir = os.path.join(args.name, 'pretrained')

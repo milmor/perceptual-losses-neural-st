@@ -19,7 +19,6 @@ policy = mixed_precision.Policy('mixed_float16')
 mixed_precision.set_policy(policy)
 
 
-
 def create_ds(args):
     train_list_ds = tf.data.Dataset.list_files(str(args.content_dir + '*.jpg'), shuffle=True)
     train_images_ds = train_list_ds.map(convert, num_parallel_calls=AUTOTUNE)
@@ -79,6 +78,7 @@ def run_training(args):
     dataset = create_ds(args)
     test_content_batch = create_test_batch(args)
 
+    @tf.function
     def train_step(batch):
         with tf.GradientTape() as tape:
             output_batch = it_network(batch)
@@ -141,7 +141,7 @@ def main():
     parser.add_argument('--content_dir', default='./ms-coco/')
     parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
     parser.add_argument('--name', default='model')
-    parser.add_argument('--checkpoint_interval', type=int, default=50)
+    parser.add_argument('--checkpoint_interval', type=int, default=250)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=20)
     parser.add_argument('--test_img', default='./images/content_img/')
     

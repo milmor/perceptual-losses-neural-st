@@ -5,7 +5,7 @@ from hparams import hparams
 
 
 class ConvReflect(tf.keras.layers.Layer):
-    # 2D convolution layer with `padding` as "reflect".
+    # 2D Convolution layer with reflection padding.
     def __init__(self, filters, kernel_size, strides=(1, 1), 
                  kernel_initializer='glorot_uniform'):
         super(ConvReflect, self).__init__()
@@ -40,7 +40,8 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
                                          gamma_initializer=hparams["initializer"])(x)
     x = layers.Activation("relu")(x)
     
-    x = ConvReflect(64, 3, strides=2, kernel_initializer=hparams["initializer"])(x)
+    x = ConvReflect(hparams['residual_filters'], 3, strides=2, 
+                    kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
@@ -94,6 +95,5 @@ def LossNetwork():
     ]
     vgg = tf.keras.applications.vgg16.VGG16(include_top=False, weights='imagenet')
     vgg.trainable = False
-    content_outputs = [vgg.get_layer(name).output for name in content_layers]
-    model_outputs = content_outputs
+    model_outputs = [vgg.get_layer(name).output for name in content_layers]
     return tf.keras.models.Model(vgg.input, model_outputs)
