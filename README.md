@@ -9,16 +9,16 @@ Implementation of the paper:
 
 ## Examples
 <p align='center'>
-  <img src='images/style_img/ashville.jpg' width="200px">
-  <img src='images/content_img/face.jpg' width="200px">
-  <img src='images/output_img_ash/512x512/face.jpeg' width="200px">
+  <img src='images/style_img/ashville.jpg' width="250">
+  <img src='images/content_img/face.jpg' width="250">
+  <img src='images/output_img_ash/512x512/face.jpeg' width="250">
 <br>
 </p>
 
 ### Different resolutions
 <p align='center'>
-  <img src='images/output_img_test8/512x512/face.jpeg' width="300px">
-  <img src='images/output_img_test8/1080x1080/face.jpeg' width="300px">
+  <img src='images/output_img_test8/512x512/face.jpeg' width="350px">
+  <img src='images/output_img_test8/1080x1080/face.jpeg' width="350px">
 </p>
 
 
