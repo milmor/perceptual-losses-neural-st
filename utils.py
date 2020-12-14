@@ -5,6 +5,11 @@ import os
 import json
 from hparams import hparams
 
+
+def deprocess(img):
+  img = 255*(img + 1.0)/2.0
+  return tf.cast(img, tf.uint8)
+
 def convert(file_path):
     img = tf.io.read_file(file_path)
     img = tf.image.decode_jpeg(img, channels=3)
@@ -18,12 +23,12 @@ def test_convert(file_path):
     return img
 
 def tensor_to_image(tensor):
-    tensor = tf.clip_by_value(tensor, 0, 255)
+    tensor = 255*(tensor + 1.0)/2.0
     tensor = np.array(tensor, dtype=np.uint8)
     if np.ndim(tensor)>3:
         assert tensor.shape[0] == 1
         tensor = tensor[0]
-    return PIL.Image.fromarray(tensor)
+    return PIL.Image.fromarray(tensor, mode="RGB")
 
 def gram_matrix(input_tensor):
     input_tensor = tf.cast(input_tensor, tf.float32) # avoid mixed_precision nan

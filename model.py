@@ -5,7 +5,7 @@ from hparams import hparams
 
 
 class ConvReflect(tf.keras.layers.Layer):
-    # 2D Convolution layer with reflection padding.
+    # 2D Convolution layer with reflection padding
     def __init__(self, filters, kernel_size, strides=(1, 1), 
                  kernel_initializer='glorot_uniform'):
         super(ConvReflect, self).__init__()
@@ -25,8 +25,9 @@ class ConvReflect(tf.keras.layers.Layer):
 
 def ImageTransformNet(input_shape=(256, 256, 3)):
     inputs = tf.keras.Input(shape=input_shape)
+    x = layers.experimental.preprocessing.Rescaling(scale=1./127.5, offset=-1)(inputs)
 
-    x = ConvReflect(32, 9, kernel_initializer=hparams["initializer"])(inputs)
+    x = ConvReflect(32, 9, kernel_initializer=hparams["initializer"])(x)
     x = tfa.layers.InstanceNormalization(axis=3, center=True, 
                                          scale=True,
                                          beta_initializer=hparams["initializer"],
@@ -82,7 +83,7 @@ def ImageTransformNet(input_shape=(256, 256, 3)):
     x = layers.Activation("relu")(x)
     
     x = ConvReflect(3, 9, kernel_initializer=hparams["initializer"])(x)
-    outputs = layers.Activation('linear', dtype='float32')(x)
+    outputs = layers.Activation('tanh', dtype='float32')(x)
 
     return tf.keras.Model(inputs, outputs)
 

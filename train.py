@@ -7,7 +7,7 @@ from tensorflow.keras.mixed_precision import experimental as mixed_precision
 import numpy as np
 import time
 from model import ImageTransformNet, LossNetwork
-from utils import convert, style_loss, content_loss, gram_matrix, save_hparams
+from utils import convert, style_loss, content_loss, gram_matrix, save_hparams, deprocess
 from hparams import hparams
 
 # Initialize DNN
@@ -78,14 +78,26 @@ def run_training(args):
     dataset = create_ds(args)
     test_content_batch = create_test_batch(args)
 
+
+    @tf.function
+    def test_step(batch):
+        prediction = it_network(batch)
+        #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 1)*255, dtype=np.uint8) # Poor quality, no convergence
+        #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 255), dtype=np.uint8)
+        return deprocess(prediction)
+
     @tf.function
     def train_step(batch):
         with tf.GradientTape() as tape:
             output_batch = it_network(batch)
+            output_batch = 255*(output_batch + 1.0)/2.0
+
             # Feed target and output batch through loss_network
             target_batch_feature_maps = loss_network(vgg16.preprocess_input(batch))
             output_batch_feature_maps = loss_network(vgg16.preprocess_input(output_batch))
-            
+            #target_batch_feature_maps = loss_network(batch)
+            #output_batch_feature_maps = loss_network(output_batch)          
+
             c_loss = content_loss(target_batch_feature_maps[2],
                                   output_batch_feature_maps[2])     
             c_loss *= hparams['content_weight']
@@ -117,9 +129,7 @@ def run_training(args):
 
         if (step_int) % args.checkpoint_interval == 0:
             ckpt_manager.save(step_int)
-            prediction = it_network(test_content_batch)
-            #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 1)*255, dtype=np.uint8) # Poor quality, no convergence
-            prediction_norm = np.array(tf.clip_by_value(prediction, 0, 255), dtype=np.uint8)
+            prediction_norm = test_step(test_content_batch)
     
             with writer.as_default():
                 tf.summary.scalar('total loss', total_loss_avg.result(), step=step_int)
@@ -139,7 +149,7 @@ def run_training(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
-    parser.add_argument('--style_img', default='./images/style_img/mosaic.jpg')
+    parser.add_argument('--style_img', default='./images/style_img/ashville.jpg')
     parser.add_argument('--name', default='model')
     parser.add_argument('--checkpoint_interval', type=int, default=250)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=20)

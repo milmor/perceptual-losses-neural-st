@@ -40,7 +40,7 @@ def run_test(args):
         tensor = tensor_to_image(output)
         c_name = os.path.splitext(c_file)[0] 
         save_path = os.path.join(out_dir, c_name)
-        tensor.save(save_path + ".jpeg", "JPEG")
+        tensor.save(save_path + ".jpeg")
         print ('Image: {}.jpeg saved'.format(save_path))
 
 
