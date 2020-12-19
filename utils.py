@@ -28,7 +28,7 @@ def tensor_to_image(tensor):
     if np.ndim(tensor)>3:
         assert tensor.shape[0] == 1
         tensor = tensor[0]
-    return PIL.Image.fromarray(tensor, mode="RGB")
+    return PIL.Image.fromarray(tensor)
 
 def gram_matrix(input_tensor):
     input_tensor = tf.cast(input_tensor, tf.float32) # avoid mixed_precision nan
@@ -53,6 +53,6 @@ def style_loss(style, output):
 
 def save_hparams(model_name):
     json_hparams = json.dumps(hparams)
-    f = open(os.path.join(model_name, "{}_hparams.json".format(model_name)), "w")
+    f = open(os.path.join(model_name, '{}_hparams.json'.format(model_name)), 'w')
     f.write(json_hparams)
     f.close()

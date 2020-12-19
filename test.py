@@ -15,18 +15,21 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
 def run_test(args):
-    it_network = ImageTransformNet(hparams['test_size'])
+    it_network = ImageTransformNet(input_shape=hparams['test_size'],
+                                   residual_layers=hparams['residual_layers'], 
+                                   residual_filters=hparams['residual_filters'], 
+                                   initializer=hparams['initializer'])
     ckpt_dir = os.path.join(args.name, 'pretrained')
     ckpt = tf.train.Checkpoint(network=it_network)
     ckpt.restore(tf.train.latest_checkpoint(ckpt_dir)).expect_partial()
-    print("\n###################################################")
-    print("Perceptual Losses for Real-Time Style Transfer Test")
-    print("###################################################\n")
-    print("Restored {}\n".format(args.name))
+    print('\n###################################################')
+    print('Perceptual Losses for Real-Time Style Transfer Test')
+    print('###################################################\n')
+    print('Restored {}\n'.format(args.name))
     
-    dir_size = "{}x{}".format(str(hparams['test_size'][0]), # img dim
+    dir_size = '{}x{}'.format(str(hparams['test_size'][0]), # img dim
                                  str(hparams['test_size'][1]))
-    dir_model = "output_img_{}".format(args.name)
+    dir_model = 'output_img_{}'.format(args.name)
     out_dir = os.path.join(args.output_path, dir_model, dir_size)
 
     if not os.path.exists(out_dir):
@@ -40,7 +43,7 @@ def run_test(args):
         tensor = tensor_to_image(output)
         c_name = os.path.splitext(c_file)[0] 
         save_path = os.path.join(out_dir, c_name)
-        tensor.save(save_path + ".jpeg")
+        tensor.save(save_path + '.jpeg')
         print ('Image: {}.jpeg saved'.format(save_path))
 
 

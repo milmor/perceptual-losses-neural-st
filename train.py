@@ -1,3 +1,7 @@
+'''
+Author: Emilio Morales (mil.mor.mor@gmail.com)
+        Oct 2020
+'''
 import argparse
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable tensorflow debugging logs
@@ -29,7 +33,7 @@ def create_ds(args):
 def create_test_batch(args):
     # Tensorboard defalut test images
     test_content_img = ['chameleon.jpg',
-                        'wall.jpg',
+                        'islas.jpeg',
                         'face.jpg']
     test_content_batch = tf.concat(
         [convert(os.path.join(args.test_img, img))[tf.newaxis, :] for img in test_content_img], axis=0)
@@ -37,8 +41,11 @@ def create_test_batch(args):
 
 
 def run_training(args): 
-    it_network = ImageTransformNet(input_shape=hparams['input_size'])
-    loss_network = LossNetwork()
+    it_network = ImageTransformNet(input_shape=hparams['input_size'],
+                                   residual_layers=hparams['residual_layers'], 
+                                   residual_filters=hparams['residual_filters'], 
+                                   initializer=hparams['initializer'])
+    loss_network = LossNetwork(hparams['style_layers'])
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=hparams['learning_rate'])
     optimizer = mixed_precision.LossScaleOptimizer(optimizer, loss_scale='dynamic')
@@ -52,18 +59,18 @@ def run_training(args):
                                               max_to_keep=args.max_ckpt_to_keep)
                                               
     ckpt.restore(ckpt_manager.latest_checkpoint)
-    print("\n####################################################")
-    print("Perceptual Losses for Real-Time Style Transfer Train")
-    print("####################################################\n")
+    print('\n####################################################')
+    print('Perceptual Losses for Real-Time Style Transfer Train')
+    print('####################################################\n')
     if ckpt_manager.latest_checkpoint:
-        print("Restored {} from: {}".format(args.name, ckpt_manager.latest_checkpoint))
+        print('Restored {} from: {}'.format(args.name, ckpt_manager.latest_checkpoint))
     else:
-        print("Initializing {} from scratch".format(args.name))
-    print("Style image: {}".format(args.style_img))
-    print("Start TensorBoard with: $ tensorboard --logdir ./\n")
+        print('Initializing {} from scratch'.format(args.name))
+    print('Style image: {}'.format(args.style_img))
+    print('Start TensorBoard with: $ tensorboard --logdir ./\n')
 
     log_dir = os.path.join(args.name, 'log_dir')
-    writer = tf.summary.create_file_writer(log_dir)
+    writer = tf.summary.create_file_writer(logdir=log_dir)
     total_loss_avg = tf.keras.metrics.Mean()
     style_loss_avg = tf.keras.metrics.Mean()
     content_loss_avg = tf.keras.metrics.Mean()
@@ -77,7 +84,6 @@ def run_training(args):
     
     dataset = create_ds(args)
     test_content_batch = create_test_batch(args)
-
 
     @tf.function
     def test_step(batch):
@@ -127,7 +133,7 @@ def run_training(args):
         ckpt.step.assign_add(1)
         step_int = int(ckpt.step) # cast ckpt.step
 
-        if (step_int) % args.checkpoint_interval == 0:
+        if (step_int) % args.ckpt_interval == 0:
             ckpt_manager.save(step_int)
             prediction_norm = test_step(test_content_batch)
     
@@ -149,9 +155,9 @@ def run_training(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_dir', default='./ms-coco/')
-    parser.add_argument('--style_img', default='./images/style_img/ashville.jpg')
+    parser.add_argument('--style_img', default='./images/style_img/woman.jpg')
     parser.add_argument('--name', default='model')
-    parser.add_argument('--checkpoint_interval', type=int, default=250)
+    parser.add_argument('--ckpt_interval', type=int, default=250)
     parser.add_argument('--max_ckpt_to_keep', type=int, default=20)
     parser.add_argument('--test_img', default='./images/content_img/')
     
