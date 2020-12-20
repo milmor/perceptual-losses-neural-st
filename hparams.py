@@ -10,5 +10,6 @@ hparams = {'input_size': (512, 512, 3),
            'style_layers': ['block1_conv2',
                             'block2_conv2',
                             'block3_conv3',
-                            'block4_conv3']
+                            'block4_conv3'],
+           'content_index': 2
 }

@@ -53,12 +53,14 @@ Set hyperparameters in `hparams.py` file.
 ### Tensorboard
 Run `tensorboard --logdir ./`
 
-## Notes for researchers 
+## Implementation notes
 - Images normalized [-1, 1] and tanh activation at the output.
 
 - Conv2d layers with reflect padding.
 
 - Above images are generated after 2,400 steps.
+
+- The model runs using mixed precision.
 
 
 ## Licence

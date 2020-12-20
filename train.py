@@ -96,7 +96,7 @@ def run_training(args):
     def train_step(batch):
         with tf.GradientTape() as tape:
             output_batch = it_network(batch)
-            output_batch = 255*(output_batch + 1.0)/2.0
+            output_batch = 255*(output_batch + 1.0)/2.0 # float deprocess
 
             # Feed target and output batch through loss_network
             target_batch_feature_maps = loss_network(vgg16.preprocess_input(batch))
@@ -104,8 +104,8 @@ def run_training(args):
             #target_batch_feature_maps = loss_network(batch)
             #output_batch_feature_maps = loss_network(output_batch)          
 
-            c_loss = content_loss(target_batch_feature_maps[2],
-                                  output_batch_feature_maps[2])     
+            c_loss = content_loss(target_batch_feature_maps[hparams['content_index']],
+                                  output_batch_feature_maps[hparams['content_index']])     
             c_loss *= hparams['content_weight']
 
             # Get output gram_matrix
