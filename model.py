@@ -25,8 +25,7 @@ class ConvReflect(tf.keras.layers.Layer):
 
     def call(self, x):
         x = tf.pad(x, self.padding, 'REFLECT') 
-        x = self.conv2d(x)
-        return x
+        return self.conv2d(x)
 
 
 def ImageTransformNet(input_shape=(256, 256, 3), residual_layers=5, 
@@ -95,11 +94,18 @@ def ImageTransformNet(input_shape=(256, 256, 3), residual_layers=5,
     return tf.keras.Model(inputs, outputs)
 
 
-def LossNetwork(style_layers = ['block1_conv2',
-                                'block2_conv2',
-                                'block3_conv3', 
-                                'block4_conv3']):
-    vgg = vgg16.VGG16(include_top=False, weights='imagenet')
-    vgg.trainable = False
-    model_outputs = [vgg.get_layer(name).output for name in style_layers]
-    return tf.keras.models.Model(vgg.input, model_outputs)
+class LossNetwork(tf.keras.models.Model):
+    def __init__(self, style_layers = ['block1_conv2',
+                                       'block2_conv2',
+                                       'block3_conv3', 
+                                       'block4_conv3']):
+        super(LossNetwork, self).__init__()
+        vgg = vgg16.VGG16(include_top=False, weights='imagenet')
+        vgg.trainable = False
+        model_outputs = [vgg.get_layer(name).output for name in style_layers]
+        self.model = tf.keras.models.Model(vgg.input, model_outputs)
+
+    def call(self, x):
+        x = vgg16.preprocess_input(x)
+        return self.model(x)
+        

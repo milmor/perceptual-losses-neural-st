@@ -6,7 +6,6 @@ import argparse
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable tensorflow debugging logs
 import tensorflow as tf
-from tensorflow.keras.applications import vgg16
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
 import numpy as np
 import time
@@ -78,7 +77,7 @@ def run_training(args):
     save_hparams(args.name)
 
     style_img = convert(args.style_img)
-    target_feature_maps = loss_network(vgg16.preprocess_input(style_img[tf.newaxis, :]))
+    target_feature_maps = loss_network(style_img[tf.newaxis, :])
     target_gram_matrices = [gram_matrix(x) for x in target_feature_maps]
     num_style_layers = len(target_feature_maps)
     
@@ -99,8 +98,8 @@ def run_training(args):
             output_batch = 255*(output_batch + 1.0)/2.0 # float deprocess
 
             # Feed target and output batch through loss_network
-            target_batch_feature_maps = loss_network(vgg16.preprocess_input(batch))
-            output_batch_feature_maps = loss_network(vgg16.preprocess_input(output_batch))
+            target_batch_feature_maps = loss_network(batch)
+            output_batch_feature_maps = loss_network(output_batch)
             #target_batch_feature_maps = loss_network(batch)
             #output_batch_feature_maps = loss_network(output_batch)          
 
@@ -143,7 +142,8 @@ def run_training(args):
                 tf.summary.scalar('style loss', style_loss_avg.result(), step=step_int)
                 images = np.reshape(prediction_norm, (-1, hparams['input_size'][0], 
                                                           hparams['input_size'][1], 3))
-                tf.summary.image('generated image', images, step=step_int, max_outputs=len(test_content_batch))
+                tf.summary.image('generated image', images, step=step_int, 
+                                 max_outputs=len(test_content_batch))
                 
             print ('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
             print ('Loss content: {:.4f}'.format(content_loss_avg.result()))
