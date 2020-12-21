@@ -145,11 +145,11 @@ def run_training(args):
                 tf.summary.image('generated image', images, step=step_int, 
                                  max_outputs=len(test_content_batch))
                 
-            print ('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
-            print ('Loss content: {:.4f}'.format(content_loss_avg.result()))
-            print ('Loss style: {:.4f}'.format(style_loss_avg.result()))
-            print ('Time taken for step {} is {} sec\n'.format(step_int, time.time()-start))
-            print ('Total time: {} sec'.format(time.time()-total_start))
+            print('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
+            print('Loss content: {:.4f}'.format(content_loss_avg.result()))
+            print('Loss style: {:.4f}'.format(style_loss_avg.result()))
+            print('Time taken for step {} is {} sec'.format(step_int, time.time()-start))
+            print('Total time: {} sec\n'.format(time.time()-total_start))
         
 
 def main():
