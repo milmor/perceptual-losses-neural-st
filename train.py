@@ -148,8 +148,8 @@ def run_training(args):
             print ('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
             print ('Loss content: {:.4f}'.format(content_loss_avg.result()))
             print ('Loss style: {:.4f}'.format(style_loss_avg.result()))
-            print ('Total time: {} sec'.format(time.time()-total_start))
             print ('Time taken for step {} is {} sec\n'.format(step_int, time.time()-start))
+            print ('Total time: {} sec'.format(time.time()-total_start))
         
 
 def main():

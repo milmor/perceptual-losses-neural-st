@@ -4,12 +4,14 @@ Author: Emilio Morales (mil.mor.mor@gmail.com)
 '''
 import tensorflow as tf
 from tensorflow.keras import layers
+from tensorflow.keras.applications import vgg16
 import tensorflow_addons as tfa
 
 
 class ConvReflect(tf.keras.layers.Layer):
     # 2D Convolution layer with reflection padding
     def __init__(self, filters, kernel_size, strides=(1, 1), 
+                 activation=None,
                  kernel_initializer='glorot_normal'):
         super(ConvReflect, self).__init__()
         self.size_pad = kernel_size // 2
@@ -18,6 +20,7 @@ class ConvReflect(tf.keras.layers.Layer):
                                     [self.size_pad, self.size_pad], 
                                     [0, 0]])
         self.conv2d = layers.Conv2D(filters, kernel_size, strides,
+                                    activation=activation,
                                     kernel_initializer=kernel_initializer)
 
     def call(self, x):
@@ -96,7 +99,7 @@ def LossNetwork(style_layers = ['block1_conv2',
                                 'block2_conv2',
                                 'block3_conv3', 
                                 'block4_conv3']):
-    vgg = tf.keras.applications.vgg16.VGG16(include_top=False, weights='imagenet')
+    vgg = vgg16.VGG16(include_top=False, weights='imagenet')
     vgg.trainable = False
     model_outputs = [vgg.get_layer(name).output for name in style_layers]
     return tf.keras.models.Model(vgg.input, model_outputs)
