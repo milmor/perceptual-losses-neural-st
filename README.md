@@ -16,7 +16,7 @@ Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/conte
   <img src='images/content_img/islas.jpeg' width="250">
   <img src='images/output_img_test1/512x512/islas.jpeg' width="250">
   <br>
-  <img src='images/style_img/picaso.jpg' width="250">
+  <img src='images/style_img/picasso.png' width="250">
   <img src='images/content_img/face.jpg' width="250">
   <img src='images/output_img_test2/512x512/face.jpeg' width="250">
 </p>
@@ -37,24 +37,24 @@ Delaunay style from Instance normalization paper.
 ## Usage
 ### Train
 1. Download [MSCOCO images](http://mscoco.org/dataset/#download).
-2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` and  to provide model name, style and content dataset path. 
+2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to provide model name, style and content dataset path. 
 ```
 python train.py --name=<model_name> --style_img=<style_image_path> --content_dir=<coco_path> 
 ```
 ### Test
-Run `test.py`. It will save every content image in the output directory.
+Run `test.py`. It will save every content image to the output directory.
 ```
 python test.py --name=<model_name> 
 ```
 
 ### Hparams setting
-Set hyperparameters in `hparams.py` file.
+Set hyperparameters on the `hparams.py` file.
 
 ### Tensorboard
 Run `tensorboard --logdir ./`
 
 ## Implementation notes
-- Images normalized [-1, 1] and tanh activation at the output.
+- Images normalized [-1, 1] and tanh activation at the network output.
 
 - Conv2d layers with reflect padding.
 
@@ -76,5 +76,3 @@ Copyright (c) 2020 Emilio Morales. Free to use, copy and modify for academic res
   year = {2020},
 }
 ```
-
-

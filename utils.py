@@ -10,16 +10,10 @@ def deprocess(img):
   img = 255*(img + 1.0)/2.0
   return tf.cast(img, tf.uint8)
 
-def convert(file_path):
+def convert(file_path, shape=hparams['input_size'][:2]):
     img = tf.io.read_file(file_path)
     img = tf.image.decode_jpeg(img, channels=3)
-    img = tf.image.resize(img, hparams['input_size'][:2])
-    return img
-
-def test_convert(file_path):
-    img = tf.io.read_file(file_path)
-    img = tf.image.decode_jpeg(img, channels=3)
-    img = tf.image.resize(img, hparams['test_size'][:2])
+    img = tf.image.resize(img, shape)
     return img
 
 def tensor_to_image(tensor):

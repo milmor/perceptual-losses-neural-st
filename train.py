@@ -24,7 +24,10 @@ mixed_precision.set_policy(policy)
 
 def create_ds(args):
     train_list_ds = tf.data.Dataset.list_files(str(args.content_dir + '*.jpg'), shuffle=True)
+    train_len = tf.data.experimental.cardinality(train_list_ds)
     train_images_ds = train_list_ds.map(convert, num_parallel_calls=AUTOTUNE)
+
+    print('Total content images: {}'.format(train_len.numpy()))
     ds = train_images_ds.repeat().batch(hparams['batch_size']).prefetch(buffer_size=AUTOTUNE)
     return ds
 
@@ -58,6 +61,9 @@ def run_training(args):
                                               max_to_keep=args.max_ckpt_to_keep)
                                               
     ckpt.restore(ckpt_manager.latest_checkpoint)
+    log_dir = os.path.join(args.name, 'log_dir')
+    writer = tf.summary.create_file_writer(logdir=log_dir)
+
     print('\n####################################################')
     print('Perceptual Losses for Real-Time Style Transfer Train')
     print('####################################################\n')
@@ -65,11 +71,10 @@ def run_training(args):
         print('Restored {} from: {}'.format(args.name, ckpt_manager.latest_checkpoint))
     else:
         print('Initializing {} from scratch'.format(args.name))
+        save_hparams(args.name)
     print('Style image: {}'.format(args.style_img))
     print('Start TensorBoard with: $ tensorboard --logdir ./\n')
 
-    log_dir = os.path.join(args.name, 'log_dir')
-    writer = tf.summary.create_file_writer(logdir=log_dir)
     total_loss_avg = tf.keras.metrics.Mean()
     style_loss_avg = tf.keras.metrics.Mean()
     content_loss_avg = tf.keras.metrics.Mean()
@@ -133,6 +138,7 @@ def run_training(args):
         step_int = int(ckpt.step) # cast ckpt.step
 
         if (step_int) % args.ckpt_interval == 0:
+            print('Time taken for step {} is {} sec'.format(step_int, time.time()-start))
             ckpt_manager.save(step_int)
             prediction_norm = test_step(test_content_batch)
     
@@ -148,8 +154,10 @@ def run_training(args):
             print('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
             print('Loss content: {:.4f}'.format(content_loss_avg.result()))
             print('Loss style: {:.4f}'.format(style_loss_avg.result()))
-            print('Time taken for step {} is {} sec'.format(step_int, time.time()-start))
             print('Total time: {} sec\n'.format(time.time()-total_start))
+            total_loss_avg.reset_states() # reset mixed precision nan
+            content_loss_avg.reset_states() # reset mixed precision nan
+            style_loss_avg.reset_states() # reset mixed precision nan
         
 
 def main():

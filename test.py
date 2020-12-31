@@ -6,7 +6,7 @@ import tensorflow as tf
 import numpy as np
 import PIL.Image
 from model import ImageTransformNet
-from utils import test_convert, tensor_to_image
+from utils import convert, tensor_to_image
 from hparams import hparams
 
 # Initialize DNN
@@ -17,18 +17,18 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 def run_test(args):
     it_network = ImageTransformNet(input_shape=hparams['test_size'],
                                    residual_layers=hparams['residual_layers'], 
-                                   residual_filters=hparams['residual_filters'], 
-                                   initializer=hparams['initializer'])
+                                   residual_filters=hparams['residual_filters'])
     ckpt_dir = os.path.join(args.name, 'pretrained')
-    ckpt = tf.train.Checkpoint(network=it_network)
+    ckpt = tf.train.Checkpoint(network=it_network, step=tf.Variable(0))
     ckpt.restore(tf.train.latest_checkpoint(ckpt_dir)).expect_partial()
     print('\n###################################################')
     print('Perceptual Losses for Real-Time Style Transfer Test')
     print('###################################################\n')
-    print('Restored {}\n'.format(args.name))
+    print('Restored {} step: {}\n'.format(args.name, str(ckpt.step.numpy())))
     
-    dir_size = '{}x{}'.format(str(hparams['test_size'][0]), # img dim
-                                 str(hparams['test_size'][1]))
+    dir_size = 'step_{}_{}x{}'.format(str(ckpt.step.numpy()),
+                                      str(hparams['test_size'][0]),
+                                      str(hparams['test_size'][1]))
     dir_model = 'output_img_{}'.format(args.name)
     out_dir = os.path.join(args.output_path, dir_model, dir_size)
 
@@ -38,7 +38,8 @@ def run_test(args):
     content_img_list = os.listdir(args.test_content_img)
 
     for c_file in content_img_list:
-        content = test_convert(os.path.join(args.test_content_img, c_file))[tf.newaxis, :]
+        content = convert(os.path.join(args.test_content_img, c_file), 
+                               hparams['test_size'][:2])[tf.newaxis, :]
         output = it_network(content)
         tensor = tensor_to_image(output)
         c_name = os.path.splitext(c_file)[0] 
