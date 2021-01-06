@@ -108,8 +108,8 @@ def run_training(args):
             #target_batch_feature_maps = loss_network(batch)
             #output_batch_feature_maps = loss_network(output_batch)          
 
-            c_loss = content_loss(target_batch_feature_maps[hparams['content_index']],
-                                  output_batch_feature_maps[hparams['content_index']])     
+            c_loss = content_loss(target_batch_feature_maps[hparams['content_layer_index']],
+                                  output_batch_feature_maps[hparams['content_layer_index']])     
             c_loss *= hparams['content_weight']
 
             # Get output gram_matrix

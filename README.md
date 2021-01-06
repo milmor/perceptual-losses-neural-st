@@ -12,13 +12,13 @@ This repository implements Dmitry Ulyanov, Andrea Vedaldi and Victor Lempitsky. 
 ## Examples
 Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper.
 <p align='center'>
-  <img src='images/style_img/woman.jpg' width="250">
-  <img src='images/content_img/islas.jpeg' width="250">
-  <img src='images/output_img_test1/512x512/islas.jpeg' width="250">
+  <img src='images/style_img/woman.jpg' width="200">
+  <img src='images/content_img/islas.jpeg' width="200">
+  <img src='images/output_img_test1/512x512/islas.jpeg' width="200">
   <br>
-  <img src='images/style_img/picasso.png' width="250">
-  <img src='images/content_img/face.jpg' width="250">
-  <img src='images/output_img_test2/512x512/face.jpeg' width="250">
+  <img src='images/style_img/picasso.png' width="200">
+  <img src='images/content_img/face.jpg' width="200">
+  <img src='images/output_img_test2/512x512/face.jpeg' width="200">
 </p>
 
 ### Different resolutions
