@@ -31,7 +31,7 @@ Delaunay style from Instance normalization paper.
 
 ## Dependencies
 - Python 3.8
-- Tensorfow 2.3
+- Tensorfow 2.4
 
 
 ## Usage
