@@ -104,9 +104,7 @@ def run_training(args):
 
             # Feed target and output batch through loss_network
             target_batch_feature_maps = loss_network(batch)
-            output_batch_feature_maps = loss_network(output_batch)
-            #target_batch_feature_maps = loss_network(batch)
-            #output_batch_feature_maps = loss_network(output_batch)          
+            output_batch_feature_maps = loss_network(output_batch)        
 
             c_loss = content_loss(target_batch_feature_maps[hparams['content_layer_index']],
                                   output_batch_feature_maps[hparams['content_layer_index']])     
@@ -155,9 +153,9 @@ def run_training(args):
             print('Loss content: {:.4f}'.format(content_loss_avg.result()))
             print('Loss style: {:.4f}'.format(style_loss_avg.result()))
             print('Total time: {} sec\n'.format(time.time()-total_start))
-            total_loss_avg.reset_states() # reset mixed precision nan
-            content_loss_avg.reset_states() # reset mixed precision nan
-            style_loss_avg.reset_states() # reset mixed precision nan
+            total_loss_avg.reset_states()
+            content_loss_avg.reset_states()
+            style_loss_avg.reset_states()
         
 
 def main():

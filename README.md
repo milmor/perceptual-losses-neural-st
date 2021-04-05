@@ -8,6 +8,7 @@ Implementation of the paper:
 
 This repository implements Dmitry Ulyanov, Andrea Vedaldi and Victor Lempitsky. [Instance normalization: The missing ingredient for fast stylization](https://arxiv.org/abs/1607.08022).
 
+See [here](https://github.com/jcjohnson/fast-neural-style) for the official Torch implementation.
 
 ## Examples
 Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper.
@@ -32,6 +33,7 @@ Delaunay style from Instance normalization paper.
 ## Dependencies
 - Python 3.8
 - Tensorfow 2.4
+- Tensorflow Addons 0.12.1
 
 
 ## Usage
@@ -48,7 +50,7 @@ python test.py --name=<model_name>
 ```
 
 ### Hparams setting
-Set hyperparameters on the `hparams.py` file.
+Set hyperparameters on the `hparams.py` file. Use `content_weight` and `style_weight` to adjust the degree of stylization.
 
 ### Tensorboard
 Run `tensorboard --logdir ./`
