@@ -110,8 +110,11 @@ class LossNetwork(tf.keras.models.Model):
         vgg.trainable = False
         model_outputs = [vgg.get_layer(name).output for name in style_layers]
         self.model = tf.keras.models.Model(vgg.input, model_outputs)
+        # mixed precision float32 output
+        self.linear = layers.Activation('linear', dtype='float32') 
 
     def call(self, x):
         x = vgg16.preprocess_input(x)
-        return self.model(x)
+        x = self.model(x)
+        return self.linear(x)
         

@@ -6,7 +6,7 @@ import argparse
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Disable tensorflow debugging logs
 import tensorflow as tf
-from tensorflow.keras.mixed_precision import experimental as mixed_precision
+from tensorflow.keras import mixed_precision
 import numpy as np
 import time
 from model import ImageTransformNet, LossNetwork
@@ -19,7 +19,7 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 
 AUTOTUNE = tf.data.experimental.AUTOTUNE
 policy = mixed_precision.Policy('mixed_float16')
-mixed_precision.set_policy(policy)
+mixed_precision.set_global_policy(policy)
 
 
 def create_ds(args):
@@ -50,7 +50,7 @@ def run_training(args):
     loss_network = LossNetwork(hparams['style_layers'])
 
     optimizer = tf.keras.optimizers.Adam(learning_rate=hparams['learning_rate'])
-    optimizer = mixed_precision.LossScaleOptimizer(optimizer, loss_scale='dynamic')
+    optimizer = mixed_precision.LossScaleOptimizer(optimizer)
     
     ckpt_dir = os.path.join(args.name, 'pretrained')
     ckpt = tf.train.Checkpoint(network=it_network,

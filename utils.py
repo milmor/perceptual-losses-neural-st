@@ -32,16 +32,12 @@ def gram_matrix(input_tensor):
     return result/num_locations
 
 def content_loss(content, output):
-    content = tf.cast(content, tf.float32)
-    output = tf.cast(output, tf.float32)
     c_loss = tf.reduce_mean(tf.square(output-content))
     return c_loss
 
 def style_loss(style, output):
     s_loss = 0
     for s_feat, o_feat in zip(style, output):
-        o_feat = tf.cast(o_feat, tf.float32)
-        s_feat = tf.cast(s_feat, tf.float32)
         s_loss += tf.reduce_mean(tf.square(s_feat-o_feat))
     return s_loss
 
