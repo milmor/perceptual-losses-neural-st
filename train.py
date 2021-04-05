@@ -91,7 +91,7 @@ def run_training(args):
 
     @tf.function
     def test_step(batch):
-        prediction = it_network(batch)
+        prediction = it_network(batch, training=False)
         #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 1)*255, dtype=np.uint8) # Poor quality, no convergence
         #prediction_norm = np.array(tf.clip_by_value(prediction, 0, 255), dtype=np.uint8)
         return deprocess(prediction)
@@ -99,7 +99,7 @@ def run_training(args):
     @tf.function
     def train_step(batch):
         with tf.GradientTape() as tape:
-            output_batch = it_network(batch)
+            output_batch = it_network(batch, training=True)
             output_batch = 255*(output_batch + 1.0)/2.0 # float deprocess
 
             # Feed target and output batch through loss_network

@@ -40,9 +40,9 @@ def run_test(args):
     for c_file in content_img_list:
         content = convert(os.path.join(args.test_content_img, c_file), 
                                hparams['test_size'][:2])[tf.newaxis, :]
-        output = it_network(content)
+        output = it_network(content, training=False)
         tensor = tensor_to_image(output)
-        c_name = os.path.splitext(c_file)[0] 
+        c_name = '{}_{}'.format(args.name, os.path.splitext(c_file)[0]) 
         save_path = os.path.join(out_dir, c_name)
         tensor.save(save_path + '.jpeg')
         print ('Image: {}.jpeg saved'.format(save_path))
