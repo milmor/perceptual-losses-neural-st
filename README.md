@@ -38,7 +38,7 @@ Delaunay style from Instance normalization paper.
 
 ## Usage
 ### Train
-1. Download [MSCOCO images](http://mscoco.org/dataset/#download).
+1. Download [COCO dataset](https://cocodataset.org/#download).
 2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to provide model name, style and content dataset path. 
 ```
 python train.py --name=<model_name> --style_img=<style_image_path> --content_dir=<coco_path> 
@@ -53,7 +53,7 @@ python test.py --name=<model_name>
 Set hyperparameters on the `hparams.py` file. Use `content_weight` and `style_weight` to adjust the degree of stylization.
 
 ### Tensorboard
-Run `tensorboard --logdir ./`
+Run `tensorboard --logdir ./`.
 
 ## Implementation notes
 - Images normalized [-1, 1] and tanh activation at the network output.
