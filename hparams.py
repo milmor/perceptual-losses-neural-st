@@ -3,7 +3,6 @@ hparams = {'input_size': (512, 512, 3),
            'content_weight': 1e-5, # 1e-5,
            'style_weight': 6e-9, # 4e-9,
            'learning_rate': 0.001,
-           'test_size': (1024, 1024, 3),
            'residual_filters': 128,
            'residual_layers': 5,
            'initializer': 'glorot_normal',
@@ -11,5 +10,6 @@ hparams = {'input_size': (512, 512, 3),
                             'block2_conv2',
                             'block3_conv3',
                             'block4_conv3'],
-           'content_layer_index': 2
+           'content_layer_index': 2,
+           'test_size': (512, 512, 3)
 }

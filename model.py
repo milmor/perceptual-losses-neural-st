@@ -116,5 +116,4 @@ class LossNetwork(tf.keras.models.Model):
     def call(self, x):
         x = vgg16.preprocess_input(x)
         x = self.model(x)
-        return self.linear(x)
-        
+        return self.linear(x)    
