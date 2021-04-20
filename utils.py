@@ -36,8 +36,8 @@ def content_loss(content, output):
     return c_loss
 
 def style_loss(style, output):
-    s_loss = tf.add_n([tf.reduce_mean((style_map-out_map)**2) 
-                        for style_map, out_map in zip(style, output)])
+    s_loss = tf.add_n([tf.reduce_mean((style_feat-out_feat)**2) 
+                        for style_feat, out_feat in zip(style, output)])
     return s_loss
 
 def save_hparams(model_name):
