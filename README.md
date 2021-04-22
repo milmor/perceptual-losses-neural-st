@@ -10,7 +10,9 @@ This repository implements Dmitry Ulyanov, Andrea Vedaldi and Victor Lempitsky. 
 
 See [here](https://github.com/jcjohnson/fast-neural-style) for the official Torch implementation.
 
+
 ## Examples
+
 Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper.
 <p align='center'>
   <img src='images/style_img/woman.jpg' width="200">
@@ -37,6 +39,7 @@ Delaunay style from Instance normalization paper.
 
 
 ## Usage
+
 ### Train
 1. Download [COCO dataset](https://cocodataset.org/#download).
 2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to provide model name, style and content dataset path. 
@@ -48,12 +51,12 @@ Run `test.py`. It will save every content image to the output directory.
 ```
 python test.py --name=<model_name> 
 ```
-
 ### Hparams setting
 Set hyperparameters on the `hparams.py` file. Use `content_weight` and `style_weight` to adjust the degree of stylization.
 
 ### Tensorboard
 Run `tensorboard --logdir ./`.
+
 
 ## Implementation notes
 - Images normalized [-1, 1] and tanh activation at the network output.
@@ -66,7 +69,7 @@ Run `tensorboard --logdir ./`.
 
 
 ## Licence
-Copyright (c) 2020 Emilio Morales. Free to use, copy and modify for academic research purposes, as long as proper attribution is given and this copyright notice is retained. Contact me for any use that is not academic research. (email: mil.mor.mor at gmail.com).
+Copyright (c) 2020 Emilio Morales. Free to use, copy and modify for academic research purposes, as long as proper attribution is given and this copyright notice is retained. Contact me for any use that is not academic research (email: mil.mor.mor at gmail.com).
 
 
 ## Citation

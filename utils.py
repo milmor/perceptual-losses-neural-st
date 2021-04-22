@@ -32,13 +32,11 @@ def gram_matrix(input_tensor):
     return result/num_locations
 
 def content_loss(content, output):
-    c_loss = tf.reduce_mean(tf.square(output-content))
-    return c_loss
+    return tf.reduce_mean((content-output)**2)
 
 def style_loss(style, output):
-    s_loss = tf.add_n([tf.reduce_mean((style_feat-out_feat)**2) 
+    return tf.add_n([tf.reduce_mean((style_feat-out_feat)**2) 
                         for style_feat, out_feat in zip(style, output)])
-    return s_loss
 
 def save_hparams(model_name):
     json_hparams = json.dumps(hparams)
