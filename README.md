@@ -13,7 +13,10 @@ See [here](https://github.com/jcjohnson/fast-neural-style) for the official Torc
 
 ## Examples
 
-Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper.
+- Content image from [Instance normalization](https://arxiv.org/abs/1607.08022) paper.
+
+- Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper. 
+
 <p align='center'>
   <img src='images/style_img/woman.jpg' width="200">
   <img src='images/content_img/islas.jpeg' width="200">
@@ -34,7 +37,7 @@ Delaunay style from Instance normalization paper.
 
 ## Dependencies
 - Python 3.8
-- Tensorfow 2.4
+- Tensorfow 2.5
 - Tensorflow Addons 0.12.1
 
 
@@ -63,7 +66,7 @@ Run `tensorboard --logdir ./`.
 
 - Conv2d layers with reflect padding.
 
-- Above images are generated after 2,400 steps.
+- Example images are generated after 2,400 steps.
 
 - The model runs using mixed precision.
 

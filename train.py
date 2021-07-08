@@ -28,7 +28,9 @@ def create_ds(args):
     train_images_ds = train_list_ds.map(convert, num_parallel_calls=AUTOTUNE)
 
     print('Total content images: {}'.format(train_len.numpy()))
-    ds = train_images_ds.repeat().batch(hparams['batch_size']).prefetch(buffer_size=AUTOTUNE)
+    ds = train_images_ds.repeat().batch(hparams['batch_size'], 
+                                        drop_remainder=True, 
+                                        num_parallel_calls=AUTOTUNE).prefetch(buffer_size=AUTOTUNE)
     return ds
 
 
@@ -123,15 +125,16 @@ def run_training(args):
         gradients = optimizer.get_unscaled_gradients(scaled_gradients)
         #gradients = tape.gradient(total_loss, it_network.trainable_variables)
         optimizer.apply_gradients(zip(gradients, it_network.trainable_variables))
-        return total_loss, c_loss, s_loss
+
+        total_loss_avg(total_loss)
+        content_loss_avg(c_loss)
+        style_loss_avg(s_loss)
     
     total_start = time.time()
     for batch_image in dataset:
         start = time.time()
-        total_loss, c_loss, s_loss = train_step(batch_image)
-        total_loss_avg.update_state(total_loss)
-        content_loss_avg.update_state(c_loss)
-        style_loss_avg.update_state(s_loss)
+        train_step(batch_image)
+
         ckpt.step.assign_add(1)
         step_int = int(ckpt.step) # cast ckpt.step
 
@@ -149,9 +152,9 @@ def run_training(args):
                 tf.summary.image('generated image', images, step=step_int, 
                                  max_outputs=len(test_content_batch))
                 
-            print('Step {} Loss: {:.4f}'.format(step_int, total_loss_avg.result())) 
-            print('Loss content: {:.4f}'.format(content_loss_avg.result()))
-            print('Loss style: {:.4f}'.format(style_loss_avg.result()))
+            print('Total loss: {:.4f}'.format(total_loss_avg.result())) 
+            print('Content loss: {:.4f}'.format(content_loss_avg.result()))
+            print('Style loss: {:.4f}'.format(style_loss_avg.result()))
             print('Total time: {} sec\n'.format(time.time()-total_start))
             total_loss_avg.reset_states()
             content_loss_avg.reset_states()
