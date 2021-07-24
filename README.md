@@ -1,5 +1,4 @@
 # Perceptual Losses Neural Style Transfer
-
 Implementation of the paper:
 
 > Justin Johnson, Alexandre Alahi and Li Fei-Fe. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://cs.stanford.edu/people/jcjohns/eccv16/) (ECCV 2016). 
@@ -12,10 +11,7 @@ See [here](https://github.com/jcjohnson/fast-neural-style) for the official Torc
 
 
 ## Examples
-
-- Content image from [Instance normalization](https://arxiv.org/abs/1607.08022) paper.
-
-- Style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper. 
+Content image from [Instance normalization](https://arxiv.org/abs/1607.08022) paper and style images from [Arbitrary Style Transfer](https://openaccess.thecvf.com/content_iccv_2017/html/Huang_Arbitrary_Style_Transfer_ICCV_2017_paper.html) paper. 
 
 <p align='center'>
   <img src='images/style_img/woman.jpg' width="200">
@@ -42,7 +38,6 @@ Delaunay style from Instance normalization paper.
 
 
 ## Usage
-
 ### Train
 1. Download [COCO dataset](https://cocodataset.org/#download).
 2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to provide model name, style and content dataset path. 
