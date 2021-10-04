@@ -1,6 +1,6 @@
 '''Image Transform Net and Loss Network models for Tensorflow.
 
-# Reference paper
+# Reference:
 - Justin Johnson, Alexandre Alahi and Li Fei-Fei. 
   [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](
     https://arxiv.org/abs/1603.08155) (ECCV 2016)
