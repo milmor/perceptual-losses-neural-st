@@ -75,7 +75,7 @@ Copyright (c) 2020 Emilio Morales. Free to use, copy and modify for academic res
 @software{morales2020perceptual,
   author = {Morales, Emilio},
   title = {Perceptual losses neural style transfer},
-  url = {https://github.com/milmor/perceptual-losses-neural-style},
+  url = {https://github.com/milmor/perceptual-losses-neural-st},
   year = {2020},
 }
 ```
