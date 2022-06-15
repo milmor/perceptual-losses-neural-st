@@ -1,5 +1,5 @@
 # Perceptual Losses Neural Style Transfer
-Implementation of the paper:
+Implementation of the _Perceptual Losses Neural Style Transfer_ model in the paper:
 
 > Justin Johnson, Alexandre Alahi and Li Fei-Fei. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) (ECCV 2016). 
 
