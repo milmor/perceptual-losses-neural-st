@@ -1,11 +1,11 @@
 # Perceptual Losses Neural Style Transfer
 Implementation of the _Perceptual Losses Neural Style Transfer_ model in the paper:
 
-> Justin Johnson, Alexandre Alahi and Li Fei-Fei. [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) (ECCV 2016). 
+> [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) (ECCV 2016). 
 
 ![Architecture](./images/architecture.png)
 
-This repository implements Dmitry Ulyanov, Andrea Vedaldi and Victor Lempitsky. [Instance normalization: The missing ingredient for fast stylization](https://arxiv.org/abs/1607.08022).
+This repository implements [Instance normalization: The missing ingredient for fast stylization](https://arxiv.org/abs/1607.08022).
 
 See [here](https://github.com/jcjohnson/fast-neural-style) for the official Torch implementation.
 
