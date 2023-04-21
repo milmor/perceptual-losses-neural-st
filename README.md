@@ -40,7 +40,7 @@ Delaunay style from Instance normalization paper.
 ## Usage
 ### Train
 1. Download [COCO dataset](https://cocodataset.org/#download).
-2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to provide model name, style and content dataset path. 
+2. Use `--name=<model_name>`, `--style_img=<style_image_path>` and `--content_dir=<coco_path>` to specify model name, style and content dataset path. 
 ```
 python train.py --name=<model_name> --style_img=<style_image_path> --content_dir=<coco_path> 
 ```
@@ -50,7 +50,7 @@ Run `test.py`. It will save every content image to the output directory.
 python test.py --name=<model_name> 
 ```
 ### Hparams setting
-Set hyperparameters on the `hparams.py` file. Use `content_weight` and `style_weight` to adjust the degree of stylization.
+Set hyperparameters in the `hparams.py` file. Use `content_weight` and `style_weight` to adjust the degree of stylization.
 
 ### Tensorboard
 Run `tensorboard --logdir ./`.
